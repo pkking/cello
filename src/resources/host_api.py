@@ -55,9 +55,10 @@ def host_query(host_id):
 @bp_host_api.route('/host', methods=['POST'])
 def host_create():
     request_debug(r, logger)
-    name, worker_api, capacity, log_type, log_server, log_level = \
+    name, worker_api, capacity, log_type, log_server, log_level, host_type = \
         r.form['name'], r.form['worker_api'], r.form['capacity'], \
-        r.form['log_type'], r.form['log_server'], r.form['log_level']
+        r.form['log_type'], r.form['log_server'], r.form['log_level'], \
+        r.form['host_type'] if 'host_type' in r.form else None
 
     if "autofill" in r.form and r.form["autofill"] == "on":
         autofill = "true"
@@ -78,7 +79,7 @@ def host_create():
         logger.warning(error_msg)
         return make_fail_resp(error=error_msg, data=r.form)
     else:
-        host_type = detect_daemon_type(worker_api)
+        host_type = host_type if host_type else detect_daemon_type(worker_api)
         result = host_handler.create(name=name, worker_api=worker_api,
                                      capacity=int(capacity),
                                      autofill=autofill,

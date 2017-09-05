@@ -67,7 +67,8 @@ class DockerHost(HostBase):
 
         detected_type = detect_daemon_type(worker_api)
         if detected_type != self.host_type:
-            logger.warning("Host type={} should be same with the initialized type={}".format(detected_type, self.host_type))
+            logger.warning("Host type={} should be same with the initialized \
+                            type={}".format(detected_type, self.host_type))
             return False
 
         if detected_type not in ['docker', 'swarm']:

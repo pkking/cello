@@ -77,8 +77,8 @@ class HostHandler(object):
         :param serialization: whether to get serialized result or object
         :return: True or False
         """
-        logger.debug("Create host: name={}, worker_api={}, host_type={}, capacity={}, "
-                     "log={}/{}, autofill={}, schedulable={}"
+        logger.debug("Create host: name={}, worker_api={}, host_type={}, "
+                     "capacity={}, log={}/{}, autofill={}, schedulable={}"
                      .format(name, worker_api, host_type, capacity, log_type,
                              log_server, autofill, schedulable))
         if not worker_api.startswith("tcp://"):
