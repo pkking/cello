@@ -79,7 +79,8 @@ def host_create():
         logger.warning(error_msg)
         return make_fail_resp(error=error_msg, data=r.form)
     else:
-        host_type = host_type if host_type else agent.detect_daemon_type(worker_api)
+        host_type = host_type if host_type else \
+            agent.detect_daemon_type(worker_api)
         result = host_handler.create(name=name, worker_api=worker_api,
                                      capacity=int(capacity),
                                      autofill=autofill,
