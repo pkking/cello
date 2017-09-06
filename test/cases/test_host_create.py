@@ -30,9 +30,9 @@ def setup_container_host_stub(*args, **kargs):
 def cleanup_stub(*args, **kargs):
     return True
 
-@patch("agent.check_daemon", check_daemon_stub)
-@patch("agent.setup_container_host", check_daemon_stub)
-@patch("agent.cleanup_host", cleanup_stub)
+@patch("agent.docker.host.check_daemon", check_daemon_stub)
+@patch("agent.docker.host.setup_container_host", check_daemon_stub)
+@patch("agent.docker.host.cleanup_host", cleanup_stub)
 class HostCreateTest(TestCase):
     def create_app(self):
         """
@@ -51,8 +51,9 @@ class HostCreateTest(TestCase):
         for h in hosts['data']:
             self.client.delete('/api/host', data=dict(id=h['id']))
 
-    @patch("agent.detect_daemon_type", swarm_stub)
-    def test_swarm_host_create(self):
+    @patch("resources.host_api.detect_daemon_type", swarm_stub)
+    @patch("agent.docker.host.detect_daemon_type", swarm_stub)
+    def test_swarm_host_create_on_swarm(self):
         '''
         create a swarm host successfully if it's really a swarm host
         '''
@@ -60,8 +61,9 @@ class HostCreateTest(TestCase):
         res = self._test_host_create("swarm")
         self.assert200(res, "create {} swarm host test failed".format("swarm"))
 
-    @patch("agent.detect_daemon_type", docker_stub)
-    def test_swarm_host_create(self):
+    @patch("resources.host_api.detect_daemon_type", docker_stub)
+    @patch("agent.docker.host.detect_daemon_type", docker_stub)
+    def test_swarm_host_create_on_docker(self):
         '''
         create a swarm host failed if it's a docker host
         '''
@@ -69,9 +71,9 @@ class HostCreateTest(TestCase):
         res = self._test_host_create("swarm")
         self.assert400(res, "create {} swarm host should failed if it's a docker host".format("swarm"))
 
-
-    @patch("agent.detect_daemon_type", docker_stub)
-    def test_docker_host_create(self):
+    @patch("resources.host_api.detect_daemon_type", docker_stub)
+    @patch("agent.docker.host.detect_daemon_type", docker_stub)
+    def test_docker_host_create_docker(self):
         '''
         create a docker host successfully if it's really a docker host
         '''
@@ -79,8 +81,9 @@ class HostCreateTest(TestCase):
         res = self._test_host_create("docker")
         self.assert200(res, "create {} docker host test failed".format("docker"))
  
-    @patch("agent.detect_daemon_type", swarm_stub)
-    def test_docker_host_create(self):
+    @patch("resources.host_api.detect_daemon_type", swarm_stub)
+    @patch("agent.docker.host.detect_daemon_type", swarm_stub)
+    def test_docker_host_create_on_swarm(self):
         '''
         create a docker host failed if it's a swarm host
         '''
@@ -88,13 +91,14 @@ class HostCreateTest(TestCase):
         res = self._test_host_create("docker")
         self.assert400(res, "create {} docker host should failed if it's a swarm host".format("docker"))
 
-    @patch("agent.detect_daemon_type", swarm_stub)
-    def test_docker_host_create(self):
+    @patch("resources.host_api.detect_daemon_type", docker_stub)
+    @patch("agent.docker.host.detect_daemon_type", docker_stub)
+    def test_docker_host_create_auto_detect(self):
         '''
         create a docker host and do not specify the host_type
         '''
         self._remove_all_hosts()
-        res = self._test_host_create("swarm")
+        res = self._test_host_create("docker")
         self.assert200(res, "create {} host test without host_type specified failed".format("docker"))
 
 

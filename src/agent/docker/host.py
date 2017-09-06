@@ -16,7 +16,6 @@ from common import \
 
 from ..host_base import HostBase
 
-import agent
 from agent import cleanup_host, check_daemon, detect_daemon_type, \
     reset_container_host, setup_container_host
 
@@ -60,13 +59,13 @@ class DockerHost(HostBase):
         :return: True or False
         """
 
-        if agent.check_daemon(worker_api):
+        if check_daemon(worker_api):
             logger.warning("The worker_api is active:" + worker_api)
         else:
             logger.warning("The worker_api is inactive:" + worker_api)
             return False
 
-        detected_type = agent.detect_daemon_type(worker_api)
+        detected_type = detect_daemon_type(worker_api)
         if detected_type != self.host_type:
             logger.warning("Host type={} should be same with the initialized \
                             type={}".format(detected_type, self.host_type))
@@ -77,7 +76,7 @@ class DockerHost(HostBase):
                            format(detected_type))
             return False
 
-        if agent.setup_container_host(detected_type, worker_api):
+        if setup_container_host(detected_type, worker_api):
             return True
         else:
             logger.warning("Cannot setup Docker host worker_api={}"
@@ -91,7 +90,7 @@ class DockerHost(HostBase):
         :return:
         """
 
-        agent.cleanup_host(worker_api)
+        cleanup_host(worker_api)
         return True
 
     @check_status
@@ -112,4 +111,4 @@ class DockerHost(HostBase):
         :param host: the host to update status
         :return: Updated host
         """
-        return agent.check_daemon(worker_api)
+        return check_daemon(worker_api)

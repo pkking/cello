@@ -18,7 +18,7 @@ from common import log_handler, LOG_LEVEL, \
     request_debug
 
 from modules import host_handler
-import agent
+from agent import detect_daemon_type
 
 logger = logging.getLogger(__name__)
 logger.setLevel(LOG_LEVEL)
@@ -80,7 +80,7 @@ def host_create():
         return make_fail_resp(error=error_msg, data=r.form)
     else:
         host_type = host_type if host_type else \
-            agent.detect_daemon_type(worker_api)
+            detect_daemon_type(worker_api)
         result = host_handler.create(name=name, worker_api=worker_api,
                                      capacity=int(capacity),
                                      autofill=autofill,
